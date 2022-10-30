@@ -2,11 +2,12 @@ package com.udacity.vehicles.service;
 
 import com.udacity.vehicles.domain.CarExample;
 import com.udacity.vehicles.domain.car.Car;
+import com.udacity.vehicles.domain.manufacturer.Manufacturer;
+import com.udacity.vehicles.domain.manufacturer.ManufacturerService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.env.Environment;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.format.DateTimeFormatter;
@@ -20,6 +21,9 @@ public class CarServiceTest {
     @Autowired
     CarService carService;
 
+    @Autowired
+    ManufacturerService manufacturerService;
+
     @Test
     public void carSaveGetListDeleteWithSuccess() {
         int initCount = carService.list().size();
@@ -31,6 +35,24 @@ public class CarServiceTest {
         carService.delete(newCar.getId());
         assertEquals(initCount, carService.list().size());
         assertEquals(0, carService.list().stream().filter(car -> Objects.equals(car.getId(), newCar.getId())).count());
+    }
+
+    @Test
+    public void carUpdateDetailsAndLocationWithSuccess() {
+        Car newCar = carService.save(CarExample.getCar());
+        assertEquals(CarExample.getCar().getDetails().getModel(), newCar.getDetails().getModel());
+        assertEquals((CarExample.getCar().getDetails().getManufacturer().getName()), newCar.getDetails().getManufacturer().getName());
+        newCar.getDetails().setModel("Model1");
+        Manufacturer newManufacturer = new Manufacturer(333, "Manuf1");
+        manufacturerService.save(newManufacturer);
+        newCar.getDetails().setManufacturer(newManufacturer);
+        assertEquals("Model1", newCar.getDetails().getModel());
+        assertEquals("Manuf1", newCar.getDetails().getManufacturer().getName());
+
+        carService.save(newCar);
+        Car afterUpdatingCar = carService.findById(newCar.getId());
+        assertEquals("Model1", afterUpdatingCar.getDetails().getModel());
+        assertEquals("Manuf1", afterUpdatingCar.getDetails().getManufacturer().getName());
     }
 
     @Test(expected = CarNotFoundException.class)
