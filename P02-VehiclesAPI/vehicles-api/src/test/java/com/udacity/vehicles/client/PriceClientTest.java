@@ -23,7 +23,7 @@ public class PriceClientTest {
         Car car = CarExample.getCar();
         car.setId(1L);
         assertNull(car.getPrice());
-        car.setPrice(priceClient.getPrice(car.getId()));
+        car.setPrice(priceClient.getPrice(car.getPlate()));
         assertNotNull(car.getPrice());
     }
 }

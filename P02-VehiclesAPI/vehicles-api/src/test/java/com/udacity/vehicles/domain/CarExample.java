@@ -11,6 +11,7 @@ public class CarExample {
      */
     public static Car getCar() {
         Car car = new Car();
+        car.setPlate("59-13-UM");
         car.setLocation(new Location(40.730610, -73.935242));
         Details details = new Details();
         Manufacturer manufacturer = new Manufacturer(101, "Chevrolet");

@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class PricingServiceIntegrationTests {
     @Autowired
@@ -15,7 +18,7 @@ public class PricingServiceIntegrationTests {
     public void getPriceWithSuccess() {
         webTestClient
                 .get()
-                .uri("/services/price?vehicleId=1")
+                .uri("/services/price?vehiclePlate=59-13-UM")
                 .exchange()
                 .expectStatus()
                 .isOk()
@@ -23,12 +26,53 @@ public class PricingServiceIntegrationTests {
     }
 
     @Test
-    public void getPriceNotFound() {
-        webTestClient
+    public void getDiffPriceForDiffPlate() {
+        WebTestClient.BodySpec priceBodySpec = webTestClient
                 .get()
-                .uri("/services/price?vehicleId=33")
+                .uri("/services/price?vehiclePlate=59-13-UM")
                 .exchange()
                 .expectStatus()
-                .isNotFound();
+                .isOk()
+                .expectBody(Price.class);
+        Price price1 = (Price) priceBodySpec.returnResult().getResponseBody();
+
+        priceBodySpec = webTestClient
+                .get()
+                .uri("/services/price?vehiclePlate=96-99-NE")
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBody(Price.class);
+        Price price2 = (Price) priceBodySpec.returnResult().getResponseBody();
+
+        assert price1 != null;
+        assert price2 != null;
+        assertNotEquals(price1.getPrice(), price2.getPrice());
+    }
+
+    @Test
+    public void getSamePriceForSamePlate() {
+        WebTestClient.BodySpec priceBodySpec = webTestClient
+                .get()
+                .uri("/services/price?vehiclePlate=59-13-UM")
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBody(Price.class);
+        Price price1 = (Price) priceBodySpec.returnResult().getResponseBody();
+
+        priceBodySpec = webTestClient
+                .get()
+                .uri("/services/price?vehiclePlate=59-13-UM")
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBody(Price.class);
+        Price price2 = (Price) priceBodySpec.returnResult().getResponseBody();
+
+        assert price1 != null;
+        assert price2 != null;
+        assertEquals(price1.getPrice(), price2.getPrice());
+        assertEquals(price1.getCurrency(), price2.getCurrency());
     }
 }

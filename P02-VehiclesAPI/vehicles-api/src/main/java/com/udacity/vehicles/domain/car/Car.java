@@ -21,6 +21,9 @@ public class Car {
     @GeneratedValue
     private Long id;
 
+    @Column(unique = true)
+    private String plate;
+
     @CreatedDate
     private LocalDateTime createdAt;
 
@@ -96,5 +99,13 @@ public class Car {
 
     public void setPrice(String price) {
         this.price = price;
+    }
+
+    public String getPlate() {
+        return plate;
+    }
+
+    public void setPlate(String plate) {
+        this.plate = plate;
     }
 }

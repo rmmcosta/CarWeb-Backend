@@ -27,7 +27,10 @@ public class CarServiceTest {
     @Test
     public void carSaveGetListDeleteWithSuccess() {
         int initCount = carService.list().size();
-        Car newCar = carService.save(CarExample.getCar());
+        //the plate must be different
+        Car anotherExampleCar = CarExample.getCar();
+        anotherExampleCar.setPlate("43-21-AB");
+        Car newCar = carService.save(anotherExampleCar);
         assertEquals(initCount + 1, carService.list().size());
         assertTrue(isTheSameCar(newCar, carService.findById(newCar.getId())));
         Car carFromList = carService.list().stream().filter(car -> Objects.equals(car.getId(), newCar.getId())).findFirst().orElseThrow(CarNotFoundException::new);
@@ -39,7 +42,9 @@ public class CarServiceTest {
 
     @Test
     public void carUpdateDetailsAndLocationWithSuccess() {
-        Car newCar = carService.save(CarExample.getCar());
+        //the plate must be different
+        Car anotherExampleCar = CarExample.getCar();
+        Car newCar = carService.save(anotherExampleCar);
         assertEquals(CarExample.getCar().getDetails().getModel(), newCar.getDetails().getModel());
         assertEquals((CarExample.getCar().getDetails().getManufacturer().getName()), newCar.getDetails().getManufacturer().getName());
         newCar.getDetails().setModel("Model1");
@@ -62,7 +67,9 @@ public class CarServiceTest {
 
     @Test
     public void priceIsNotNull() {
-        Car newCar = carService.save(CarExample.getCar());
+        //the plate must be different
+        Car anotherExampleCar = CarExample.getCar();
+        Car newCar = carService.save(anotherExampleCar);
         assertNull(newCar.getPrice());
         //only when getting the car the price is calculated
         newCar = carService.findById(newCar.getId());
@@ -71,7 +78,9 @@ public class CarServiceTest {
 
     @Test
     public void addressIsNotNull() {
-        Car newCar = carService.save(CarExample.getCar());
+        //the plate must be different
+        Car anotherExampleCar = CarExample.getCar();
+        Car newCar = carService.save(anotherExampleCar);
         assertNull(newCar.getLocation().getAddress());
         assertNull(newCar.getLocation().getCity());
         assertNull(newCar.getLocation().getState());
