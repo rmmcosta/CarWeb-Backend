@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
@@ -44,6 +45,7 @@ public class CarServiceTest {
     public void carUpdateDetailsAndLocationWithSuccess() {
         //the plate must be different
         Car anotherExampleCar = CarExample.getCar();
+        anotherExampleCar.setPlate(String.valueOf(LocalDateTime.now()));
         Car newCar = carService.save(anotherExampleCar);
         assertEquals(CarExample.getCar().getDetails().getModel(), newCar.getDetails().getModel());
         assertEquals((CarExample.getCar().getDetails().getManufacturer().getName()), newCar.getDetails().getManufacturer().getName());
@@ -69,6 +71,7 @@ public class CarServiceTest {
     public void priceIsNotNull() {
         //the plate must be different
         Car anotherExampleCar = CarExample.getCar();
+        anotherExampleCar.setPlate(String.valueOf(LocalDateTime.now()));
         Car newCar = carService.save(anotherExampleCar);
         assertNull(newCar.getPrice());
         //only when getting the car the price is calculated
@@ -80,6 +83,7 @@ public class CarServiceTest {
     public void addressIsNotNull() {
         //the plate must be different
         Car anotherExampleCar = CarExample.getCar();
+        anotherExampleCar.setPlate(String.valueOf(LocalDateTime.now()));
         Car newCar = carService.save(anotherExampleCar);
         assertNull(newCar.getLocation().getAddress());
         assertNull(newCar.getLocation().getCity());
@@ -91,6 +95,13 @@ public class CarServiceTest {
         assertNotNull(newCar.getLocation().getCity());
         assertNotNull(newCar.getLocation().getState());
         assertNotNull(newCar.getLocation().getZip());
+    }
+
+    @Test(expected = CarWithSamePlateException.class)
+    public void anotherCarWithSamePlateThrowsCarWithSamePlateException() {
+        Car car = CarExample.getCar();
+        carService.save(car);
+        carService.save(car);
     }
 
     private boolean isTheSameCar(Car car1, Car car2) {

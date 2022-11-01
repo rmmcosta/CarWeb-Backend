@@ -33,6 +33,6 @@ public class Order {
     @Embedded
     private Location deliveryLocation = new Location(0d, 0d);
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER)
     private Set<Car> carSet;
 }

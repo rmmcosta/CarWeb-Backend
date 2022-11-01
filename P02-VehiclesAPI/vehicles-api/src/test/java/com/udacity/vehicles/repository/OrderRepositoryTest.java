@@ -33,6 +33,10 @@ public class OrderRepositoryTest {
     public void orderRepositoryCrud() {
         long initCount = orderRepository.count();
         Order order = OrderExample.getOrder();
+        for (Car car : order.getCarSet()) {
+            car.setPlate(String.valueOf(LocalDateTime.now()));
+            carRepository.save(car);
+        }
         order = orderRepository.save(order);
         assertNotNull(order);
         assertNotNull(order.getId());

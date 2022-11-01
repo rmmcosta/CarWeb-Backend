@@ -7,6 +7,7 @@ import com.udacity.vehicles.domain.car.Car;
 import com.udacity.vehicles.domain.car.CarRepository;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -59,6 +60,12 @@ public class CarService {
      * @return the new/updated car is stored in the repository
      */
     public Car save(Car car) {
+        //check if a car is not registered with the same plate yet
+        List<Car> cars = repository.findAll();
+        boolean carWithSamePLate = cars.stream().anyMatch(currCar -> Objects.equals(currCar.getPlate(), car.getPlate()) && !Objects.equals(currCar.getId(), car.getId()));
+        if (carWithSamePLate) {
+            throw new CarWithSamePlateException();
+        }
         if (car.getId() != null) {
             return repository.findById(car.getId())
                     .map(carToBeUpdated -> {
