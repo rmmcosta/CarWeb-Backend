@@ -6,6 +6,8 @@ import java.time.LocalDateTime;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
+import com.udacity.vehicles.domain.OrderStatus;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -33,6 +35,11 @@ public class Car {
     @NotNull
     @Enumerated(EnumType.STRING)
     private Condition condition;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(length = 10, columnDefinition = "varchar(10) default 'FOR_SALE'")
+    private OrderStatus orderStatus = OrderStatus.FOR_SALE;
 
     @Valid
     @Embedded
@@ -107,5 +114,13 @@ public class Car {
 
     public void setPlate(String plate) {
         this.plate = plate;
+    }
+
+    public OrderStatus getOrderStatus() {
+        return orderStatus;
+    }
+
+    public void setOrderStatus(OrderStatus orderStatus) {
+        this.orderStatus = orderStatus;
     }
 }
